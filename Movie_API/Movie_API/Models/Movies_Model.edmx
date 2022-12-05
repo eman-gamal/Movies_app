@@ -1,0 +1,517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Movies_App_DB_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Movie">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Release_Year" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Type_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Movie_Rating_Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Movie_id" Type="int" Nullable="false" />
+          <Property Name="Rate" Type="decimal" Precision="18" Scale="1" Nullable="false" />
+          <Property Name="Update_date" Type="date" Nullable="false" />
+          <Property Name="Source_id" Type="int" Nullable="false" />
+          <Property Name="Popularity" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Source">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Type" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="Data_Needed" Type="text" Nullable="false" />
+          <Property Name="URL" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Response" Type="text" />
+        </EntityType>
+        <EntityType Name="Type">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Watch_List">
+          <Key>
+            <PropertyRef Name="Movie_id" />
+            <PropertyRef Name="User_id" />
+          </Key>
+          <Property Name="Movie_id" Type="int" Nullable="false" />
+          <Property Name="User_id" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Movie_Rating_Log_Movie">
+          <End Role="Movie" Type="Self.Movie" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Movie_Rating_Log" Type="Self.Movie_Rating_Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Movie">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Movie_Rating_Log">
+              <PropertyRef Name="Movie_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Movie_Rating_Log_Source">
+          <End Role="Source" Type="Self.Source" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Movie_Rating_Log" Type="Self.Movie_Rating_Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Movie_Rating_Log">
+              <PropertyRef Name="Source_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Movie_Type">
+          <End Role="Type" Type="Self.Type" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Movie" Type="Self.Movie" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Type">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Movie">
+              <PropertyRef Name="Type_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Watch_List_Movie">
+          <End Role="Movie" Type="Self.Movie" Multiplicity="1" />
+          <End Role="Watch_List" Type="Self.Watch_List" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Movie">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Watch_List">
+              <PropertyRef Name="Movie_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Watch_List_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Watch_List" Type="Self.Watch_List" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Watch_List">
+              <PropertyRef Name="User_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="Movie_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Movie_name" Type="nvarchar" Mode="In" />
+          <Parameter Name="Release_year" Type="int" Mode="In" />
+          <Parameter Name="Description" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Type_name" Type="nvarchar" Mode="In" />
+          <Parameter Name="Rate" Type="decimal" Mode="In" />
+          <Parameter Name="Popularity" Type="decimal" Mode="In" />
+          <Parameter Name="Source_name" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="Movies_Select_All" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="Movies_Select_ByTitle" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Movie_Name" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="Sources_Select_All" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="Watch_List_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Username" Type="nvarchar" Mode="In" />
+          <Parameter Name="Password" Type="nvarchar" Mode="In" />
+          <Parameter Name="Movie_Name" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="Watch_List_Select" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Username" Type="nvarchar" Mode="In" />
+          <Parameter Name="Password" Type="nvarchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="Movies_App_DB_ModelStoreContainer">
+          <EntitySet Name="Movie" EntityType="Self.Movie" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Movie_Rating_Log" EntityType="Self.Movie_Rating_Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Source" EntityType="Self.Source" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Type" EntityType="Self.Type" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Watch_List" EntityType="Self.Watch_List" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Movie_Rating_Log_Movie" Association="Self.FK_Movie_Rating_Log_Movie">
+            <End Role="Movie" EntitySet="Movie" />
+            <End Role="Movie_Rating_Log" EntitySet="Movie_Rating_Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Movie_Rating_Log_Source" Association="Self.FK_Movie_Rating_Log_Source">
+            <End Role="Source" EntitySet="Source" />
+            <End Role="Movie_Rating_Log" EntitySet="Movie_Rating_Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Movie_Type" Association="Self.FK_Movie_Type">
+            <End Role="Type" EntitySet="Type" />
+            <End Role="Movie" EntitySet="Movie" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Watch_List_Movie" Association="Self.FK_Watch_List_Movie">
+            <End Role="Movie" EntitySet="Movie" />
+            <End Role="Watch_List" EntitySet="Watch_List" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Watch_List_Users" Association="Self.FK_Watch_List_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Watch_List" EntitySet="Watch_List" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Movies_App_DB_Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Movie">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Release_Year" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Type_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Movie_Rating_Log" Relationship="Self.FK_Movie_Rating_Log_Movie" FromRole="Movie" ToRole="Movie_Rating_Log" />
+          <NavigationProperty Name="Type" Relationship="Self.FK_Movie_Type" FromRole="Movie" ToRole="Type" />
+          <NavigationProperty Name="Users" Relationship="Self.Watch_List" FromRole="Movie" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="Movie_Rating_Log">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Movie_id" Type="Int32" Nullable="false" />
+          <Property Name="Rate" Type="Decimal" Precision="18" Scale="1" Nullable="false" />
+          <Property Name="Update_date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Source_id" Type="Int32" Nullable="false" />
+          <Property Name="Popularity" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <NavigationProperty Name="Movie" Relationship="Self.FK_Movie_Rating_Log_Movie" FromRole="Movie_Rating_Log" ToRole="Movie" />
+          <NavigationProperty Name="Source" Relationship="Self.FK_Movie_Rating_Log_Source" FromRole="Movie_Rating_Log" ToRole="Source" />
+        </EntityType>
+        <EntityType Name="Source">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Data_Needed" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Movie_Rating_Log" Relationship="Self.FK_Movie_Rating_Log_Source" FromRole="Source" ToRole="Movie_Rating_Log" />
+          <Property Name="URL" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Type">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Movies" Relationship="Self.FK_Movie_Type" FromRole="Type" ToRole="Movie" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Movies" Relationship="Self.Watch_List" FromRole="Users" ToRole="Movie" />
+        </EntityType>
+        <Association Name="FK_Movie_Rating_Log_Movie">
+          <End Role="Movie" Type="Self.Movie" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Movie_Rating_Log" Type="Self.Movie_Rating_Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Movie">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Movie_Rating_Log">
+              <PropertyRef Name="Movie_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Movie_Type">
+          <End Role="Type" Type="Self.Type" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Movie" Type="Self.Movie" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Type">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Movie">
+              <PropertyRef Name="Type_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Movie_Rating_Log_Source">
+          <End Role="Source" Type="Self.Source" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Movie_Rating_Log" Type="Self.Movie_Rating_Log" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Source">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Movie_Rating_Log">
+              <PropertyRef Name="Source_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Watch_List">
+          <End Role="Movie" Type="Self.Movie" Multiplicity="*" />
+          <End Role="Users" Type="Self.User" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="Movies_DB_Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Movies" EntityType="Self.Movie" />
+          <EntitySet Name="Movie_Rating_Log" EntityType="Self.Movie_Rating_Log" />
+          <EntitySet Name="Sources" EntityType="Self.Source" />
+          <EntitySet Name="Types" EntityType="Self.Type" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <AssociationSet Name="FK_Movie_Rating_Log_Movie" Association="Self.FK_Movie_Rating_Log_Movie">
+            <End Role="Movie" EntitySet="Movies" />
+            <End Role="Movie_Rating_Log" EntitySet="Movie_Rating_Log" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Movie_Type" Association="Self.FK_Movie_Type">
+            <End Role="Type" EntitySet="Types" />
+            <End Role="Movie" EntitySet="Movies" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Movie_Rating_Log_Source" Association="Self.FK_Movie_Rating_Log_Source">
+            <End Role="Source" EntitySet="Sources" />
+            <End Role="Movie_Rating_Log" EntitySet="Movie_Rating_Log" />
+          </AssociationSet>
+          <AssociationSet Name="Watch_List" Association="Self.Watch_List">
+            <End Role="Movie" EntitySet="Movies" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <FunctionImport Name="Movies_Select_All" ReturnType="Collection(Movies_App_DB_Model.Movies_Select_All_Result)">
+            </FunctionImport>
+          <FunctionImport Name="Movies_Select_ByTitle" ReturnType="Collection(Movies_App_DB_Model.Movies_Select_ByTitle_Result)">
+            <Parameter Name="Movie_Name" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="Sources_Select_All" ReturnType="Collection(Movies_App_DB_Model.Sources_Select_All_Result)">
+            </FunctionImport>
+          <FunctionImport Name="Watch_List_Insert">
+            <Parameter Name="Username" Mode="In" Type="String" />
+            <Parameter Name="Password" Mode="In" Type="String" />
+            <Parameter Name="Movie_Name" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="Watch_List_Select" ReturnType="Collection(Movies_App_DB_Model.Watch_List_Select_Result)">
+            <Parameter Name="Username" Mode="In" Type="String" />
+            <Parameter Name="Password" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="Movie_Insert">
+            <Parameter Name="Movie_name" Mode="In" Type="String" />
+            <Parameter Name="Release_year" Mode="In" Type="Int32" />
+            <Parameter Name="Description" Mode="In" Type="String" />
+            <Parameter Name="Type_name" Mode="In" Type="String" />
+            <Parameter Name="Rate" Mode="In" Type="Decimal" />
+            <Parameter Name="Popularity" Mode="In" Type="Decimal" />
+            <Parameter Name="Source_name" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="Movies_Select_All_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Release_Year" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="10" />
+          <Property Type="Decimal" Name="Rate" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Popularity" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="Data_Source" Nullable="false" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="Movies_Select_ByTitle_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Release_Year" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="10" />
+          <Property Type="Decimal" Name="Rate" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Popularity" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="String" Name="Data_Source" Nullable="false" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="Watch_List_Select_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Release_Year" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="10" />
+        </ComplexType>
+        <ComplexType Name="Movie_Insert_Param" >
+          <Property Type="String" Name="Movie_name" Nullable="false" />
+          <Property Type="Int32" Name="Release_year" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+          <Property Type="String" Name="Type_name" Nullable="false" />
+          <Property Type="Decimal" Name="Rate" Nullable="false" />
+          <Property Type="Decimal" Name="Popularity" Nullable="false" />
+          <Property Type="String" Name="Source_name" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="Sources_Select_All_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="Data_Needed" Nullable="false" MaxLength="Max" />
+          <Property Type="String" Name="URL" Nullable="false" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Movies_App_DB_ModelStoreContainer" CdmEntityContainer="Movies_DB_Entities">
+          <EntitySetMapping Name="Movies">
+            <EntityTypeMapping TypeName="Movies_App_DB_Model.Movie">
+              <MappingFragment StoreEntitySet="Movie">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Type_id" ColumnName="Type_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Movie_Rating_Log">
+            <EntityTypeMapping TypeName="Movies_App_DB_Model.Movie_Rating_Log">
+              <MappingFragment StoreEntitySet="Movie_Rating_Log">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Movie_id" ColumnName="Movie_id" />
+                <ScalarProperty Name="Rate" ColumnName="Rate" />
+                <ScalarProperty Name="Update_date" ColumnName="Update_date" />
+                <ScalarProperty Name="Source_id" ColumnName="Source_id" />
+                <ScalarProperty Name="Popularity" ColumnName="Popularity" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sources">
+            <EntityTypeMapping TypeName="Movies_App_DB_Model.Source">
+              <MappingFragment StoreEntitySet="Source">
+                <ScalarProperty Name="Response" ColumnName="Response" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Data_Needed" ColumnName="Data_Needed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Types">
+            <EntityTypeMapping TypeName="Movies_App_DB_Model.Type">
+              <MappingFragment StoreEntitySet="Type">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="Movies_App_DB_Model.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Watch_List" TypeName="Movies_App_DB_Model.Watch_List" StoreEntitySet="Watch_List">
+            <EndProperty Name="Movie">
+              <ScalarProperty Name="Id" ColumnName="Movie_id" />
+            </EndProperty>
+            <EndProperty Name="Users">
+              <ScalarProperty Name="Id" ColumnName="User_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="Movies_Select_All" FunctionName="Movies_App_DB_Model.Store.Movies_Select_All">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Movies_App_DB_Model.Movies_Select_All_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Rate" ColumnName="Rate" />
+                <ScalarProperty Name="Popularity" ColumnName="Popularity" />
+                <ScalarProperty Name="Data_Source" ColumnName="Data_Source" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="Movies_Select_ByTitle" FunctionName="Movies_App_DB_Model.Store.Movies_Select_ByTitle">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Movies_App_DB_Model.Movies_Select_ByTitle_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Rate" ColumnName="Rate" />
+                <ScalarProperty Name="Popularity" ColumnName="Popularity" />
+                <ScalarProperty Name="Data_Source" ColumnName="Data_Source" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="Sources_Select_All" FunctionName="Movies_App_DB_Model.Store.Sources_Select_All">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Movies_App_DB_Model.Sources_Select_All_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Data_Needed" ColumnName="Data_Needed" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="Watch_List_Insert" FunctionName="Movies_App_DB_Model.Store.Watch_List_Insert" />
+          <FunctionImportMapping FunctionImportName="Watch_List_Select" FunctionName="Movies_App_DB_Model.Store.Watch_List_Select">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Movies_App_DB_Model.Watch_List_Select_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="Movie_Insert" FunctionName="Movies_App_DB_Model.Store.Movie_Insert" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

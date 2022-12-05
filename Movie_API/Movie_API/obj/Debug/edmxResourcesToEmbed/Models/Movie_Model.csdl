@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Movies_App_DB_Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Movie">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Release_Year" Type="Int32" Nullable="false" />
+    <Property Name="Popularity" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+    <Property Name="Rate" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+    <Property Name="Source_id" Type="Int32" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Type_id" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Source" Relationship="Self.FK_Movie_Source" FromRole="Movie" ToRole="Source" />
+    <NavigationProperty Name="Type" Relationship="Self.FK_Movie_Type" FromRole="Movie" ToRole="Type" />
+    <NavigationProperty Name="Users" Relationship="Self.Watch_List" FromRole="Movie" ToRole="Users" />
+    <NavigationProperty Name="Movie_Rating_Log" Relationship="Movies_App_DB_Model.FK_Movie_Rating_Log_Movie" FromRole="Movie" ToRole="Movie_Rating_Log" />
+  </EntityType>
+  <EntityType Name="Movie_Rating_Log">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Movie_id" Type="Int32" Nullable="false" />
+    <Property Name="Rating" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+    <Property Name="Update_date" Type="DateTime" Nullable="false" Precision="0" />
+    <NavigationProperty Name="Movie" Relationship="Movies_App_DB_Model.FK_Movie_Rating_Log_Movie" FromRole="Movie_Rating_Log" ToRole="Movie" />
+  </EntityType>
+  <EntityType Name="Source">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Type" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="Data_Needed" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Movies" Relationship="Self.FK_Movie_Source" FromRole="Source" ToRole="Movie" />
+  </EntityType>
+  <EntityType Name="Type">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Movies" Relationship="Self.FK_Movie_Type" FromRole="Type" ToRole="Movie" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Movies" Relationship="Self.Watch_List" FromRole="Users" ToRole="Movie" />
+  </EntityType>
+  <Association Name="FK_Movie_Source">
+    <End Role="Source" Type="Self.Source" Multiplicity="1" />
+    <End Role="Movie" Type="Self.Movie" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Source">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Movie">
+        <PropertyRef Name="Source_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Movie_Type">
+    <End Role="Type" Type="Self.Type" Multiplicity="1" />
+    <End Role="Movie" Type="Self.Movie" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Type">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Movie">
+        <PropertyRef Name="Type_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="Watch_List">
+    <End Role="Movie" Type="Self.Movie" Multiplicity="*" />
+    <End Role="Users" Type="Self.User" Multiplicity="*" />
+  </Association>
+  <EntityContainer Name="Movies_App_DBEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Movies" EntityType="Self.Movie" />
+    <EntitySet Name="Movie_Rating_Log" EntityType="Self.Movie_Rating_Log" />
+    <EntitySet Name="Sources" EntityType="Self.Source" />
+    <EntitySet Name="Types" EntityType="Self.Type" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <AssociationSet Name="FK_Movie_Source" Association="Self.FK_Movie_Source">
+      <End Role="Source" EntitySet="Sources" />
+      <End Role="Movie" EntitySet="Movies" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Movie_Type" Association="Self.FK_Movie_Type">
+      <End Role="Type" EntitySet="Types" />
+      <End Role="Movie" EntitySet="Movies" />
+    </AssociationSet>
+    <AssociationSet Name="Watch_List" Association="Self.Watch_List">
+      <End Role="Movie" EntitySet="Movies" />
+      <End Role="Users" EntitySet="Users" />
+    </AssociationSet>
+    <FunctionImport Name="Movies_Select_All" ReturnType="Collection(Movies_App_DB_Model.Movies_Select_All_Result)">
+      <Parameter Name="Username" Mode="In" Type="String" />
+      <Parameter Name="Password" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="Movies_Select_ByTitle" ReturnType="Collection(Movies_App_DB_Model.Movies_Select_ByTitle_Result)">
+      <Parameter Name="Username" Mode="In" Type="String" />
+      <Parameter Name="Password" Mode="In" Type="String" />
+      <Parameter Name="Movie_Name" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="Watch_List_Insert">
+      <Parameter Name="Username" Mode="In" Type="String" />
+      <Parameter Name="Password" Mode="In" Type="String" />
+      <Parameter Name="Movie_Name" Mode="In" Type="String" />
+    </FunctionImport>
+    <AssociationSet Name="FK_Movie_Rating_Log_Movie" Association="Movies_App_DB_Model.FK_Movie_Rating_Log_Movie">
+      <End Role="Movie" EntitySet="Movies" />
+      <End Role="Movie_Rating_Log" EntitySet="Movie_Rating_Log" />
+    </AssociationSet>
+    <FunctionImport Name="Sources_Select_All" ReturnType="Collection(Movies_App_DB_Model.Sources_Select_All_Result)">
+      <Parameter Name="Username" Mode="In" Type="String" />
+      <Parameter Name="Password" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="Watch_List_Select" ReturnType="Collection(Movies_App_DB_Model.Watch_List_Select_Result)">
+      <Parameter Name="Username" Mode="In" Type="String" />
+      <Parameter Name="Password" Mode="In" Type="String" />
+    </FunctionImport>
+  </EntityContainer>
+  <ComplexType Name="Movies_Select_All_Result">
+    <Property Type="Int32" Name="Id" Nullable="false" />
+    <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+    <Property Type="Int32" Name="Release_Year" Nullable="false" />
+    <Property Type="Decimal" Name="Popularity" Nullable="false" Precision="18" Scale="0" />
+    <Property Type="Decimal" Name="Rate" Nullable="false" Precision="18" Scale="0" />
+    <Property Type="Int32" Name="Source_id" Nullable="false" />
+    <Property Type="String" Name="Description" Nullable="false" />
+    <Property Type="Int32" Name="Type_id" Nullable="false" />
+    <Property Type="String" Name="DATA_SOURCE" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Name" Nullable="false" MaxLength="10" />
+  </ComplexType>
+  <ComplexType Name="Movies_Select_ByTitle_Result">
+    <Property Type="Int32" Name="Id" Nullable="false" />
+    <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+    <Property Type="Int32" Name="Release_Year" Nullable="false" />
+    <Property Type="Decimal" Name="Popularity" Nullable="false" Precision="18" Scale="0" />
+    <Property Type="Decimal" Name="Rate" Nullable="false" Precision="18" Scale="0" />
+    <Property Type="Int32" Name="Source_id" Nullable="false" />
+    <Property Type="String" Name="Description" Nullable="false" />
+    <Property Type="Int32" Name="Type_id" Nullable="false" />
+    <Property Type="String" Name="DATA_SOURCE" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Name" Nullable="false" MaxLength="10" />
+  </ComplexType>
+  <Association Name="FK_Movie_Rating_Log_Movie">
+    <End Type="Movies_App_DB_Model.Movie" Role="Movie" Multiplicity="1" />
+    <End Type="Movies_App_DB_Model.Movie_Rating_Log" Role="Movie_Rating_Log" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Movie">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Movie_Rating_Log">
+        <PropertyRef Name="Movie_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <ComplexType Name="Sources_Select_All_Result">
+    <Property Type="String" Name="Name" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Type" Nullable="false" MaxLength="10" />
+  </ComplexType>
+  <ComplexType Name="Watch_List_Select_Result">
+    <Property Type="Int32" Name="Id" Nullable="false" />
+    <Property Type="String" Name="Title" Nullable="false" MaxLength="100" />
+    <Property Type="Int32" Name="Release_Year" Nullable="false" />
+    <Property Type="String" Name="Description" Nullable="false" />
+    <Property Type="Decimal" Name="Popularity" Nullable="false" Precision="18" Scale="0" />
+    <Property Type="Decimal" Name="Rate" Nullable="false" Precision="18" Scale="0" />
+    <Property Type="String" Name="Type" Nullable="false" MaxLength="10" />
+  </ComplexType>
+</Schema>

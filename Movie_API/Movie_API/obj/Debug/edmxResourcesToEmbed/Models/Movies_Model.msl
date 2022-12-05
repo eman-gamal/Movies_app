@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="Movies_App_DB_ModelStoreContainer" CdmEntityContainer="Movies_DB_Entities">
+    <EntitySetMapping Name="Movies">
+      <EntityTypeMapping TypeName="Movies_App_DB_Model.Movie">
+        <MappingFragment StoreEntitySet="Movie">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Type_id" ColumnName="Type_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Movie_Rating_Log">
+      <EntityTypeMapping TypeName="Movies_App_DB_Model.Movie_Rating_Log">
+        <MappingFragment StoreEntitySet="Movie_Rating_Log">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Movie_id" ColumnName="Movie_id" />
+          <ScalarProperty Name="Rate" ColumnName="Rate" />
+          <ScalarProperty Name="Update_date" ColumnName="Update_date" />
+          <ScalarProperty Name="Source_id" ColumnName="Source_id" />
+          <ScalarProperty Name="Popularity" ColumnName="Popularity" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Sources">
+      <EntityTypeMapping TypeName="Movies_App_DB_Model.Source">
+        <MappingFragment StoreEntitySet="Source">
+          <ScalarProperty Name="Response" ColumnName="Response" />
+          <ScalarProperty Name="URL" ColumnName="URL" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Data_Needed" ColumnName="Data_Needed" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Types">
+      <EntityTypeMapping TypeName="Movies_App_DB_Model.Type">
+        <MappingFragment StoreEntitySet="Type">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="Movies_App_DB_Model.User">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Username" ColumnName="Username" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="Watch_List" TypeName="Movies_App_DB_Model.Watch_List" StoreEntitySet="Watch_List">
+      <EndProperty Name="Movie">
+        <ScalarProperty Name="Id" ColumnName="Movie_id" />
+      </EndProperty>
+      <EndProperty Name="Users">
+        <ScalarProperty Name="Id" ColumnName="User_id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <FunctionImportMapping FunctionImportName="Movies_Select_All" FunctionName="Movies_App_DB_Model.Store.Movies_Select_All">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="Movies_App_DB_Model.Movies_Select_All_Result">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Rate" ColumnName="Rate" />
+          <ScalarProperty Name="Popularity" ColumnName="Popularity" />
+          <ScalarProperty Name="Data_Source" ColumnName="Data_Source" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="Movies_Select_ByTitle" FunctionName="Movies_App_DB_Model.Store.Movies_Select_ByTitle">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="Movies_App_DB_Model.Movies_Select_ByTitle_Result">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Rate" ColumnName="Rate" />
+          <ScalarProperty Name="Popularity" ColumnName="Popularity" />
+          <ScalarProperty Name="Data_Source" ColumnName="Data_Source" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="Sources_Select_All" FunctionName="Movies_App_DB_Model.Store.Sources_Select_All">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="Movies_App_DB_Model.Sources_Select_All_Result">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Data_Needed" ColumnName="Data_Needed" />
+          <ScalarProperty Name="URL" ColumnName="URL" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="Watch_List_Insert" FunctionName="Movies_App_DB_Model.Store.Watch_List_Insert" />
+    <FunctionImportMapping FunctionImportName="Watch_List_Select" FunctionName="Movies_App_DB_Model.Store.Watch_List_Select">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="Movies_App_DB_Model.Watch_List_Select_Result">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Release_Year" ColumnName="Release_Year" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="Movie_Insert" FunctionName="Movies_App_DB_Model.Store.Movie_Insert" />
+  </EntityContainerMapping>
+</Mapping>
